@@ -1,180 +1,38 @@
 #include<bits/stdc++.h>
-#define mx 100000000000LL
-
 using namespace std;
-
-struct edge
-{
-    long long v,w;
-    edge(){}
-    edge(long long to, long long weight){
-        v=to, w=weight;
-    }
-    bool operator<(edge e)const{
-        return w>e.w;
-    }
-};
-
-long long dist[100100],res[100100];
-
-void dijkstra(long long src,vector<edge>*vec)
-{
-    priority_queue<edge>pq;
-    pq.push(edge(src,0));
-    dist[src]=0;
-    while(!pq.empty()){
-        //cout<<"  hello  "<<endl;
-        edge E=pq.top();
-        pq.pop();
-
-        int sz=vec[E.v].size();
-
-        for(int i=0; i<sz; i++){
-            edge adj=vec[E.v][i];
-
-            if(E.w+adj.w<dist[adj.v]){
-
-                dist[adj.v] = E.w + adj.w;
-                pq.push(edge(adj.v,dist[adj.v]));
-                res[adj.v]=E.v;
-
-            }
-
-        }
-    }
-}
 
 int main()
 {
-    int n,m,u,v,w;
-    while(cin>>n>>m){
-        vector<edge>vec[100100];
-        memset(res,0,sizeof(res));
-        for(int i=0; i<m; i++){
-            cin>>u>>v>>w;
-            vec[u].push_back(edge(v,w));
-            vec[v].push_back(edge(u,w));
-            res[u]=1;
-            res[v]=1;
+    int t,n,m,u,v,w;
+    scanf("%d",&t);
+    for(int i=1; i<=t; i++){
+        scanf("%d %d",&n,&m);
+        vector<pair<int,int>>graph[n+5];
+        vector<int>dist(n+5,100000000);
+
+        for(int j=0; j<m; j++){
+            scanf("%d %d %d",&u,&v,&w);
+            graph[u].push_back({w,v});
+            graph[v].push_back({w,u});
         }
-        /*for(int j=0; j<m; j++){
-            for(int i=0; i<vec[j].size(); i++){
-                cout<<j<<"   ::   "<<vec[j][i].v<<"    "<<vec[j][i].w<<endl;
-            }
-        }*/
 
-        for(int i=0; i<100005; i++)
-            dist[i]=mx;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+        pq.push({0,1});
+        dist[1]=0;
 
-        dijkstra(1,vec);
-
-        if(dist[n]==mx) cout<<-1<<endl;
-        else{
-            stack<long long>st;
-            while(n!=1){
-                st.push(n);
-                n=res[n];
-            }
-            st.push(1);
-            while(!st.empty()){
-                cout<<st.top()<<" ";
-                st.pop();
-            }
-            cout<<endl;
-        }
-    }
-}
-
-
-
-
-/**     An Example :D
-
-#include<cstdio>
-#include<cstring>
-#include<vector>
-#include<queue>
-#define mx 100000000000000LL
-
-using namespace std;
-
-struct edge
-{
-    long long v,w;
-    edge(){}
-    edge(long long to, long long weight){
-        v=to, w=weight;
-    }
-    bool operator<(edge e)const{
-        return w>e.w;
-    }
-};
-
-long long dist[100100],res[100100],visited[100100];
-
-void dijkstra(long long k,long long x,long long src,vector<edge>*vec)
-{
-    priority_queue<edge>pq;
-    pq.push(edge(src,0));
-    dist[src]=0;
-    int flag=0;
-    while(!pq.empty()){
-        edge E=pq.top();
-        pq.pop();
-
-        if(E.v<=k && flag==0){
-            flag=1;
-            for(int i=1; i<=k; i++){
-                if(E.v==i) continue;
-
-                if(E.w+x<dist[i]){
-                    dist[i] = E.w + x;
-                    if(visited[i]==0){
-                        pq.push(edge(i,dist[i]));
-                        visited[i]=1;
-                        flag=0;
-                    }
+        while(!pq.empty()){
+            pair<int,int> x=pq.top();
+            pq.pop();
+            int sz=graph[x.second].size();
+            for(int j=0; j<sz; j++){
+                pair<int,int>temp=graph[x.second][j];
+                if(x.first+temp.first<dist[temp.second]){
+                    dist[temp.second]=x.first+temp.first;
+                    pq.push({dist[temp.second],temp.second});
                 }
             }
         }
-
-        long long sz=vec[E.v].size();
-        for(int i=0; i<sz; i++){
-            edge adj=vec[E.v][i];
-
-            if(E.w+adj.w<dist[adj.v]){
-
-                dist[adj.v] = E.w + adj.w;
-                pq.push(edge(adj.v,dist[adj.v]));
-                visited[adj.v]=1;
-            }
-        }
+        (dist[n]!=100000000)?printf("Case %d: %d\n",i,dist[n]):printf("Case %d: Impossible\n",i);
     }
+    return 0;
 }
-
-int main()
-{
-    long long t,n,k,x,m,s,u,v,w;
-    scanf("%lld",&t);
-    while(t--){
-        scanf("%lld %lld %lld %lld %lld",&n,&k,&x,&m,&s);
-        vector<edge>vec[100100];
-        for(int i=0; i<m; i++){
-            scanf("%lld %lld %lld",&u,&v,&w);
-            vec[u].push_back(edge(v,w));
-            vec[v].push_back(edge(u,w));
-        }
-
-        for(int i=0; i<=n+10; i++)
-            dist[i]=mx;
-
-        dijkstra(k,x,s,vec);
-
-        memset(visited,0,sizeof(visited));
-
-        for(int i=1; i<=n; i++)
-            printf("%lld ",dist[i]);
-        printf("\n");
-    }
-}
-*/

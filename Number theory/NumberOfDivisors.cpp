@@ -30,10 +30,10 @@ void seive()
     }
 }
 
-int NOD ( int n ) {
+int NOD(int n) {
     int sqrtn = sqrt ( n );
     int res = 1;
-    for ( int i = 0; i < primes.size() && primes[i] <= sqrtn; i++ ) {
+    for(int i = 0; i < primes.size() && primes[i] <= sqrtn; i++) {
         if ( n % primes[i] == 0 ) {
             int p = 0; /*Counter for power of prime*/
             while ( n % primes[i] == 0 ) {
